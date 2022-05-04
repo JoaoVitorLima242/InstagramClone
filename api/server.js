@@ -1,6 +1,7 @@
 var express = require('express'),
     bodyParser = require('body-parser'),
     mongodb = require('mongodb');
+const ReplSet = require('mongodb/lib/replset');
     ObjectId = require('mongodb').ObjectId;
 
 var app = express();
@@ -76,7 +77,7 @@ app.post('/api', (req, res) =>{
     });
 });
 
-// PUT by ID
+// PUT by ID (update)
 app.put('/api/:id', function(req, res){
     db.open(function(err, mongoclient){
         mongoclient.collection('posts', (err, collection) =>{
@@ -93,6 +94,21 @@ app.put('/api/:id', function(req, res){
                     mongoclient.close();
                 },
             )
+        });
+    });
+});
+
+// DELETE by ID (remove)
+app.delete('/api/:id', function(req, res){
+    db.open(function(err, mongoclient){
+        mongoclient.collection('posts', (err, collection) =>{
+            collection.remove({_id: ObjectId(req.params.id)}, (err, result) => {
+                if(err) {
+                    res.json(err)
+                } else {
+                    res.json(result)
+                }
+            })
         });
     });
 });
