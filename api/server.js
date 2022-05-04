@@ -28,7 +28,7 @@ app.get('/', function(req, res){
 app.get('/api', function(req, res){
     var dados = req.body;
     db.open(function(err, mongoclient){
-        mongoclient.collection('postagens', (err, collection) =>{
+        mongoclient.collection('posts', (err, collection) =>{
             collection.find().toArray((err, result) => {
                     if(err) {
                         res.json(err)
@@ -45,7 +45,7 @@ app.get('/api', function(req, res){
 app.post('/api', (req, res) =>{
     var dados = req.body;
     db.open((err, mongoclient) => {
-        mongoclient.collection('postagens', (err, collection) => {
+        mongoclient.collection('posts', (err, collection) => {
             collection.insert(dados, (err, records) => {
                 if(err){
                     res.json({'status': 'erro'});
