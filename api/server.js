@@ -24,12 +24,29 @@ app.get('/', function(req, res){
     res.send({msg:'Olá'});
 });
 
-// POST(create)
-app.post('/api', function(req, res){
+// GET(ready)
+app.get('/api', function(req, res){
     var dados = req.body;
     db.open(function(err, mongoclient){
-        mongoclient.collection('postagens', function(err, collection){
-            collection.insert(dados, function(err, records){
+        mongoclient.collection('postagens', (err, collection) =>{
+            collection.find().toArray((err, result) => {
+                    if(err) {
+                        res.json(err)
+                    } else {
+                        res.json(result)
+                    }
+                    mongoclient.close();
+            });
+        });
+    });
+}); 
+
+// POST(create)
+app.post('/api', (req, res) =>{
+    var dados = req.body;
+    db.open((err, mongoclient) => {
+        mongoclient.collection('postagens', (err, collection) => {
+            collection.insert(dados, (err, records) => {
                 if(err){
                     res.json({'status': 'erro'});
                 }else{
