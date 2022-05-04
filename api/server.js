@@ -32,7 +32,7 @@ app.post('/api', (req, res) => {
 	var dados = req.body;
 
 	db.open( (err, mongoclient) => {
-		mongoclient.collection('postagens', (err, collection) => {
+		mongoclient.collection('posts', (err, collection) => {
 			collection.insert(dados, (err, records)  => {
 				if(err){
 					res.json({'status' : 'erro'});
@@ -50,7 +50,7 @@ app.post('/api', (req, res) => {
 //GET (ready)
 app.get('/api', (req, res) => {
 	db.open( (err, mongoclient) => {
-		mongoclient.collection('postagens', (err, collection) => {
+		mongoclient.collection('posts', (err, collection) => {
 			collection.find().toArray((err, results) => {
 				if(err){
 					res.json(err);
@@ -68,7 +68,7 @@ app.get('/api', (req, res) => {
 //GET by ID (ready)
 app.get('/api/:id', (req, res) => {
 	db.open( (err, mongoclient) => {
-		mongoclient.collection('postagens', (err, collection) => {
+		mongoclient.collection('posts', (err, collection) => {
 			collection.find(objectId(req.params.id)).toArray((err, results) => {
 				if(err){
 					res.json(err);
@@ -86,7 +86,7 @@ app.get('/api/:id', (req, res) => {
 //PUT by ID (update)
 app.put('/api/:id', (req, res) => {
 	db.open( (err, mongoclient) => {
-		mongoclient.collection('postagens', (err, collection) => {
+		mongoclient.collection('posts', (err, collection) => {
 			collection.update(
 				{ _id : objectId(req.params.id) },
 				{ $set : { titulo : req.body.titulo}},
@@ -109,7 +109,7 @@ app.put('/api/:id', (req, res) => {
 //DELETE by ID (remover)
 app.delete('/api/:id', (req, res) => {
 	db.open( (err, mongoclient) => {
-		mongoclient.collection('postagens', (err, collection) => {
+		mongoclient.collection('posts', (err, collection) => {
 			collection.remove({ _id : objectId(req.params.id)}, (err, records) => {
 				if(err){
 					res.json(err);
