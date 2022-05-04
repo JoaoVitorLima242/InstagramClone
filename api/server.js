@@ -75,3 +75,24 @@ app.post('/api', (req, res) =>{
         });
     });
 });
+
+// PUT by ID
+app.put('/api/:id', function(req, res){
+    db.open(function(err, mongoclient){
+        mongoclient.collection('posts', (err, collection) =>{
+            collection.update(
+                {_id: ObjectId(req.params.id)},
+                { $set: {title: req.body.title}},
+                {},
+                (err, records) => {
+                    if(err) {
+                        res.json(err)
+                    } else {
+                        res.json(records)
+                    };
+                    mongoclient.close();
+                },
+            )
+        });
+    });
+});
