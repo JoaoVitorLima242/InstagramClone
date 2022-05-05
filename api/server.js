@@ -112,6 +112,21 @@ app.get('/api/:id', (req, res) => {
 
 });
 
+//GET IMAGE 
+app.get('/images/:image', (req, res) => {
+	const img = req.params.image;
+
+	fs.readFile('./uploads/'+img, (err, content) => {
+		if(err) {
+			res.status(404).json(err)
+			return;
+		}
+
+		res.writeHead(200, {"content-type": "image/jpg"})
+		res.end(content);
+	})
+});
+
 
 //PUT by ID (update)
 app.put('/api/:id', (req, res) => {
