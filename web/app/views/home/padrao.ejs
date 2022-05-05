@@ -33,9 +33,19 @@
 											data[i].title +
 										"</span>" +
 										"<img src='http://localhost:3001/images/"+data[i].imgInsta+"' />" + 
+										"<div class='comentar'>"+
+											"<input type='text' class='form-control input_comentario' id='postagem_"+data[i]._id+"' placeholder='adicionei um comentario'>"+
+											"<button class='btn btn-default btn-postagem' value='"+data[i]._id+"'>Comentar</button>"+
+										"</div>"+
 									"</div>"
 								)
 							}
+
+							$('.btn-postagem').click(function() {
+								const id = this.value;
+								const comentario = $("#postagem_"+id).val(); 
+								alert(comentario)
+							})
 						}
 					}
 
@@ -96,6 +106,28 @@
 				</div>
 			</div>
 		</nav>
+		<div class="container" style="display:none" id="container_form">
+			<div class="panel panel-default">
+
+				<div class="panel-heading"><h4>Publicar uma foto</h4></div>
+				
+				<div class="panel-body">
+					<div class="form-group">
+						<input type="file" name="file" id="file" class="form-control">
+					</div>
+
+					<div class="form-group">
+						<input type="text" name="title" id="title" class="form-control" placeholder="title" autocomplete="off">
+					</div>
+
+					<div class="form-group">
+						<button class="btn btn-success" id="btn-publicar">Publicar</button>
+						<button class="btn btn-danger" id="btn-cancelar-publicacao">Cancelar</button>
+					</div>
+					<div id="mensagem" class="alert"></div>
+				</div>
+			</div>
+		</div>
 
 		<div class="container">
 			<div class="col-md-2"></div>
@@ -104,26 +136,5 @@
 		</div>
 
 
-		<div class="container" style="display:none" id="container_form">
-			<div class="panel panel-default">
-
-			<div class="panel-heading"><h4>Publicar uma foto</h4></div>
-			
-			<div class="panel-body">
-				<div class="form-group">
-					<input type="file" name="file" id="file" class="form-control">
-				</div>
-
-				<div class="form-group">
-					<input type="text" name="title" id="title" class="form-control" placeholder="title" autocomplete="off">
-				</div>
-
-				<div class="form-group">
-					<button class="btn btn-success" id="btn-publicar">Publicar</button>
-					<button class="btn btn-danger" id="btn-cancelar-publicacao">Cancelar</button>
-				</div>
-				<div id="mensagem"></div>
-			</div>
-		</div>
 	</body>
 </html>
