@@ -17,6 +17,33 @@
 		<script>
 			$(document).ready(() => {
 
+				const carregaPostagens = () => {
+					const xhr = new XMLHttpRequest();
+
+					xhr.open('GET', 'http://localhost:3001/api')
+
+					xhr.onload = () => {
+						if(xhr.status === 200) {
+							let data = $.parseJSON(xhr.responseText);
+							
+							for(let i = 0; i < data.length; i++) {
+								$('#container-timeline').append(
+									"<div class='publicacao'>" + 
+										"<span class='titulo'>" + 
+											data[i].title +
+										"</span>" +
+										"<img src='http://localhost3001/uploads/"+data[i].imgInsta+"' />" + 
+									"</div>"
+								)
+							}
+						}
+					}
+
+					xhr.send();
+				}
+
+				carregaPostagens();
+
 				$('#btn_incluir').click(() => {
 					$('#container_timeline').hide();
 					$('#container_form').show();
@@ -72,7 +99,7 @@
 
 		<div class="container">
 			<div class="col-md-2"></div>
-			<div class="col-md-8" id="container_timeline"></div>
+			<div class="col-md-8" id="container-timeline"></div>
 			
 		</div>
 

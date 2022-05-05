@@ -76,6 +76,9 @@ app.post('/api', (req, res) => {
 
 //GET (ready)
 app.get('/api', (req, res) => {
+
+	res.setHeader("Access-Control-Allow-Origin", "*");
+
 	db.open( (err, mongoclient) => {
 		mongoclient.collection('posts', (err, collection) => {
 			collection.find().toArray((err, results) => {
