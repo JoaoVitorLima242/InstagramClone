@@ -1,19 +1,23 @@
-var express = require('express'),
+const express = require('express'),
 	bodyParser = require('body-parser'),
 	mongodb = require('mongodb'),
-	objectId = require('mongodb').ObjectId;
+	objectId = require('mongodb').ObjectId,
+	multiparty= require('connect-multiparty'),
+	fs = require('fs')
+	
 
-var app = express();
+const app = express();
 
-//body-parser
+//mid
 app.use(bodyParser.urlencoded({ extended:true}));
 app.use(bodyParser.json());
+app.use(multiparty());
 
-var port = 3001;
+const port = 3001;
 
 app.listen(port);
 
-var db = new mongodb.Db(
+const db = new mongodb.Db(
 	'instagram',
 	new mongodb.Server('localhost', 27017, {}),
 	{}
@@ -29,20 +33,43 @@ app.get('/', (req, res) => {
 //POST (create)
 app.post('/api', (req, res) => {
 
-	var dados = req.body;
+	res.setHeader("Access-Control-Allow-Origin", "*");
 
-	db.open( (err, mongoclient) => {
-		mongoclient.collection('posts', (err, collection) => {
-			collection.insert(dados, (err, records)  => {
-				if(err){
-					res.json({'status' : 'erro'});
-				} else {
-					res.json({'status' : 'inclusao realizada com sucesso'});
-				}
-				mongoclient.close();
+	const date = new Date();
+	const timeStamp = date.getTime();
+
+	let dados = req.body;
+
+	const urlImg = timeStamp + "_" +  req.files.file.originalFilename;
+
+	const originPath = req.files.file.path;
+	const destinyPath = './uploads/' + urlImg;
+
+
+	dados = {
+		...dados,
+		imgInsta: urlImg,
+	}
+
+	fs.rename(originPath, destinyPath, (err) => {
+		if (err) {
+			res.status(500).json({error: err});
+			return;
+		}
+
+		db.open( (err, mongoclient) => {
+			mongoclient.collection('posts', (err, collection) => {
+				collection.insert(dados, (err, records)  => {
+					if(err){
+						res.json({'status' : 'erro'});
+					} else {
+						res.json({'status' : 'inclusao realizada com sucesso'});
+					}
+					mongoclient.close();
+				});
 			});
 		});
-	});
+	})
 
 });
 

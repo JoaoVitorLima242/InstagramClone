@@ -28,6 +28,30 @@
 					return false;
 				});
 
+				$('#btn-publicar').click(() => {
+					const formData = new FormData();
+
+					const file = document.getElementById('file').files[0];
+					const title = document.getElementById('title').value;
+
+					formData.append("file", file);
+					formData.append("title", title);
+
+					const xhr = new XMLHttpRequest();
+
+					xhr.onreadystatechange = () => {
+						if(xhr.readyState === 4) {
+							const resposta = xhr.responseText;
+							document.getElementById('mensagem').innerHTML = resposta;
+						}
+					}
+					
+
+					xhr.open("POST", "http://localhost:3001/api");
+					xhr.send(formData);
+					
+				})
+
 			});
 		</script>
 
@@ -60,11 +84,11 @@
 			
 			<div class="panel-body">
 				<div class="form-group">
-					<input type="file" name="arquivo" id="arquivo" class="form-control">
+					<input type="file" name="file" id="file" class="form-control">
 				</div>
 
 				<div class="form-group">
-					<input type="text" name="titulo" id="titulo" class="form-control" placeholder="Titulo" autocomplete="off">
+					<input type="text" name="title" id="title" class="form-control" placeholder="title" autocomplete="off">
 				</div>
 
 				<div class="form-group">
