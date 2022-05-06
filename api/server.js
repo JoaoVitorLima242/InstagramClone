@@ -13,6 +13,16 @@ app.use(bodyParser.urlencoded({ extended:true}));
 app.use(bodyParser.json());
 app.use(multiparty());
 
+app.use((req, res, next) => {
+
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+	res.setHeader("Access-Control-Allow-Headers", "content-type");
+	res.setHeader("Access-Control-Allow-Credentials", true);
+
+	next()
+})
+
 const port = 3001;
 
 app.listen(port);
@@ -32,8 +42,6 @@ app.get('/', (req, res) => {
 
 //POST (create)
 app.post('/api', (req, res) => {
-
-	res.setHeader("Access-Control-Allow-Origin", "*");
 
 	const date = new Date();
 	const timeStamp = date.getTime();
@@ -76,8 +84,6 @@ app.post('/api', (req, res) => {
 
 //GET (ready)
 app.get('/api', (req, res) => {
-
-	res.setHeader("Access-Control-Allow-Origin", "*");
 
 	db.open( (err, mongoclient) => {
 		mongoclient.collection('posts', (err, collection) => {
@@ -134,7 +140,13 @@ app.put('/api/:id', (req, res) => {
 		mongoclient.collection('posts', (err, collection) => {
 			collection.update(
 				{ _id : objectId(req.params.id) },
-				{ $set : { titulo : req.body.titulo}},
+				{ $push : { 
+					comentarios : {
+						id_comentario: new objectId(),
+						comentario: req.body.comentario
+						}
+					},
+				},
 				{},
 				(err, records) => {
 					if(err){
@@ -147,21 +159,33 @@ app.put('/api/:id', (req, res) => {
 				}
 			);
 		});
-	});
+	}); 
 });
 
 
 //DELETE by ID (remover)
-app.delete('/api/:id', (req, res) => {
-	db.open( (err, mongoclient) => {
-		mongoclient.collection('posts', (err, collection) => {
-			collection.remove({ _id : objectId(req.params.id)}, (err, records) => {
-				if(err){
-					res.json(err);
-				} else {
-					res.json(records);
+app.delete('/api/:id', function(req, res){
+
+	db.open( function(err, mongoclient){
+		mongoclient.collection('posts', function(err, collection){
+			collection.update(
+				{ }, 
+				{ $pull : 	{
+								comentarios: { id_comentario : objectId(req.params.id)}
+							}
+				},
+				{multi: true},
+				function(err, records){
+					if(err){
+						res.json(err);
+					} else {
+						res.json(records);
+					}
+
+					mongoclient.close();
 				}
-			});
+			);
 		});
 	});
+
 });

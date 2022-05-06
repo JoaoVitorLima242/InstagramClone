@@ -33,18 +33,62 @@
 											data[i].title +
 										"</span>" +
 										"<img src='http://localhost:3001/images/"+data[i].imgInsta+"' />" + 
+										"<div class='comentarios' id='comentarios_"+data[i]._id+"'></div>"+
 										"<div class='comentar'>"+
 											"<input type='text' class='form-control input_comentario' id='postagem_"+data[i]._id+"' placeholder='adicionei um comentario'>"+
 											"<button class='btn btn-default btn-postagem' value='"+data[i]._id+"'>Comentar</button>"+
 										"</div>"+
 									"</div>"
 								)
+								
+								if(data[i].comentarios != undefined){
+									var comentarios = data[i].comentarios;
+
+									for(j = 0; j < comentarios.length; j++){
+										$('#comentarios_' + data[i]._id).append(
+											'<div class="txt_comentario">'+
+												'<button type="button" value="' + comentarios[j].id_comentario + '" class="btn btn-default btn_remover_postagem">X</button>'+
+												comentarios[j].comentario+
+											'</div>'
+										);
+									}
+								}
+
 							}
+
+							$('.btn_remover_postagem').click(function(){
+								const id_comentario = this.value;
+
+								const xhr = new XMLHttpRequest();
+								xhr.open('DELETE', 'http://localhost:3001/api/'+id_comentario);
+								
+								xhr.onload = function(){
+									if(xhr.status === 200){
+										window.location.href = '/';
+									}
+								}
+
+								console.log(id_comentario)
+
+								xhr.send();
+
+							});
 
 							$('.btn-postagem').click(function() {
 								const id = this.value;
 								const comentario = $("#postagem_"+id).val(); 
-								alert(comentario)
+								
+								const xhr = new XMLHttpRequest(); 
+								xhr.open('PUT', 'http://localhost:3001/api/'+id);
+								xhr.setRequestHeader('Content-Type', 'application/json');
+
+								xhr.onload = function(){
+									if(xhr.status === 200){
+										window.location.href = '/';
+									}
+								};
+
+								xhr.send(JSON.stringify({ comentario : comentario }));
 							})
 						}
 					}
